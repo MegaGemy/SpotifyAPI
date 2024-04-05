@@ -21,7 +21,7 @@ namespace SpotifyAPI
 
         }
 
-        public static async Task<List<EventsDto>> GetAllConcerts()
+        public static async Task<List<ConcertsResultsDto>> GetAllConcerts()
         {
             using (var response = await client.SendAsync(request))
             {
@@ -33,14 +33,20 @@ namespace SpotifyAPI
                 Console.WriteLine(body);
                 List<ConcertsResultsDto> concertsResultsDto = new List<ConcertsResultsDto>();
                 var model = JsonConvert.DeserializeObject<ReponseResult>(body);
-                var result = model.events.Where(c => c.location == "Washington" && c.openingDate == c.closingDate)
-                    .OrderByDescending(x => x.venue).ThenByDescending(x => x.openingDate).ToList();
+                var result = model.events.Where(c => c.location == "Washington" && c.openingDate == c.closingDate).ToList();
 
                 foreach(var resultDto in result)
                 {
                     string Title = "";
                     string Date = "";
                     string venue = "";
+                    foreach (var item in resultDto.concerts)
+                    {
+                        Title = item.concert.title;
+                        Date = item.concert.date;
+                        venue = item.concert.venue;
+                    }
+                    
                     int artistsCount = resultDto.artists.Count();
                     int concertsCount = resultDto.concerts.Count();
                     ConcertsResultsDto concertsResults = new ConcertsResultsDto();
@@ -52,8 +58,11 @@ namespace SpotifyAPI
                     concertsResultsDto.Add(concertsResults);
                 }
 
-                
-                return result;
+                concertsResultsDto.OrderByDescending(x => x.venue).ThenByDescending(x => x.date).ToList();
+
+
+
+                return concertsResultsDto;
             }
         }
     }

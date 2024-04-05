@@ -19,7 +19,7 @@ namespace SpotifyAPI.Controllers
         }
 
         [HttpGet(Name = "GetSpotifyConcerts")]
-        public Task<List<EventsDto>> GetAllConcerts()
+        public Task<List<ConcertsResultsDto>> GetAllConcerts()
         {
             return SpotifyApiAppService.GetAllConcerts();
         }
